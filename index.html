@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Registro y Consulta de Suscripciones</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #04152f, #082b63);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 25px 15px;
+      color: #fff;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 620px;
+      background: rgba(255, 255, 255, 0.09);
+      padding: 26px;
+      border-radius: 20px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.35);
+      backdrop-filter: blur(12px);
+    }
+
+    h1 {
+      text-align: center;
+      margin: 0 0 8px;
+      font-size: 27px;
+    }
+
+    .subtitulo {
+      text-align: center;
+      color: #cfd8ff;
+      font-size: 14px;
+      margin-bottom: 22px;
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .tab-btn {
+      padding: 13px;
+      border: none;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.25s;
+    }
+
+    .tab-btn.active {
+      background: #1e90ff;
+      box-shadow: 0 0 0 3px rgba(30,144,255,0.25);
+    }
+
+    .seccion {
+      display: none;
+    }
+
+    .seccion.active {
+      display: block;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 13px;
+      border: none;
+      border-radius: 11px;
+      margin-bottom: 17px;
+      font-size: 15px;
+      outline: none;
+      background: #fff;
+      color: #111;
+    }
+
+    input:focus, select:focus {
+      box-shadow: 0 0 0 3px rgba(30, 144, 255, 0.35);
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .resultado {
+      background: rgba(255,255,255,0.12);
+      padding: 16px;
+      border-radius: 15px;
+      margin-bottom: 18px;
+      border: 1px solid rgba(255,255,255,0.18);
+    }
+
+    .resultado p {
+      margin: 7px 0;
+      font-size: 14px;
+    }
+
+    .contador {
+      font-size: 22px;
+      font-weight: bold;
+      color: #4cff9b;
+    }
+
+    .vencido {
+      color: #ff5f5f;
+    }
+
+    .nota {
+      font-size: 12px;
+      color: #d8e2ff;
+      margin-top: -8px;
+      margin-bottom: 17px;
+      line-height: 1.4;
+    }
+
+    button.enviar {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      background: #1e90ff;
+      color: #fff;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button.enviar:hover {
+      background: #0077e6;
+    }
+
+    button.enviar:disabled {
+      background: #777;
+      cursor: not-allowed;
+    }
+
+    .mensaje {
+      margin-top: 18px;
+      padding: 13px;
+      border-radius: 12px;
+      text-align: center;
+      display: none;
+      font-weight: bold;
+    }
+
+    .exito {
+      background: #18a058;
+      color: #fff;
+    }
+
+    .error {
+      background: #d93025;
+      color: #fff;
+    }
+
+    .consulta-card {
+      background: rgba(0,0,0,0.24);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 15px;
+      padding: 16px;
+      margin-top: 14px;
+    }
+
+    .consulta-card h3 {
+      margin: 0 0 12px;
+      font-size: 18px;
+      color: #4cff9b;
+    }
+
+    .consulta-card p {
+      margin: 7px 0;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .estado-activo {
+      color: #4cff9b;
+      font-weight: bold;
+    }
+
+    .estado-vencido {
+      color: #ff5f5f;
+      font-weight: bold;
+    }
+
+    @media (max-width: 560px) {
+      .row {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+
+      .container {
+        padding: 22px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h1>Control de Suscripciones</h1>
+    <p class="subtitulo">Registra cuentas y consulta días restantes por correo.</p>
+
+    <div class="tabs">
+      <button class="tab-btn active" id="btnRegistro" type="button">Registro</button>
+      <button class="tab-btn" id="btnConsulta" type="button">Consulta</button>
+    </div>
+
+    <!-- SECCIÓN REGISTRO -->
+    <section id="seccionRegistro" class="seccion active">
+      <form id="formRegistro">
+
+        <label for="correoCuenta">Correo de la cuenta</label>
+        <input 
+          type="email" 
+          id="correoCuenta" 
+          name="correoCuenta" 
+          placeholder="ejemplo@gmail.com" 
+          required
+        >
+
+        <div class="row">
+          <div>
+            <label for="tipoCuenta">Tipo de cuenta</label>
+            <select id="tipoCuenta" name="tipoCuenta" required>
+              <option value="">Seleccionar</option>
+              <option value="Individual">Individual</option>
+              <option value="Dúo">Dúo</option>
+              <option value="Familiar">Familiar</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="pais">País</label>
+            <select id="pais" name="pais" required>
+              <option value="">Seleccionar</option>
+              <option value="Nigeria">Nigeria</option>
+              <option value="Egipto">Egipto</option>
+              <option value="Brasil">Brasil</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="fechaActivacion">Fecha de activación</label>
+            <input 
+              type="date" 
+              id="fechaActivacion" 
+              name="fechaActivacion" 
+              required
+            >
+          </div>
+
+          <div>
+            <label for="duracion">Tiempo de suscripción</label>
+            <select id="duracion" name="duracion" required>
+              <option value="">Seleccionar</option>
+              <option value="30">30 días</option>
+              <option value="60">60 días</option>
+              <option value="90">90 días</option>
+              <option value="180">180 días</option>
+              <option value="365">365 días</option>
+            </select>
+          </div>
+        </div>
+
+        <label for="correoBanca">Correo de la banca</label>
+        <input 
+          type="email" 
+          id="correoBanca" 
+          name="correoBanca" 
+          placeholder="correo asociado a la banca"
+          required
+        >
+
+        <label for="numeroTarjeta">Número de tarjeta</label>
+        <input 
+          type="text"
+          id="numeroTarjeta"
+          name="numeroTarjeta"
+          inputmode="numeric"
+          maxlength="19"
+          placeholder="1234 5678 9012 3456"
+          required
+        >
+
+        <p class="nota">
+          Por seguridad, la tarjeta completa no se guarda en Google Sheets. 
+          Solo se registrarán los últimos 4 dígitos.
+        </p>
+
+        <button type="submit" class="enviar" id="btnGuardar">Guardar registro</button>
+      </form>
+
+      <div id="mensajeRegistro" class="mensaje"></div>
+    </section>
+
+    <!-- SECCIÓN CONSULTA -->
+    <section id="seccionConsulta" class="seccion">
+      <form id="formConsulta">
+        <label for="correoConsulta">Correo de la cuenta</label>
+        <input 
+          type="email" 
+          id="correoConsulta" 
+          name="correoConsulta" 
+          placeholder="ejemplo@gmail.com" 
+          required
+        >
+
+        <button type="submit" class="enviar" id="btnBuscar">Consultar</button>
+      </form>
+
+      <div id="mensajeConsulta" class="mensaje"></div>
+
+      <div id="resumenConsulta" class="resultado" style="display:none;">
+        <p><strong>Día de activación:</strong> <span id="consultaActivacion">-</span></p>
+        <p><strong>Fecha de vencimiento:</strong> <span id="consultaVencimiento">-</span></p>
+        <p><strong>Días faltantes:</strong> <span id="consultaDias" class="contador">-</span></p>
+      </div>
+
+      <div id="resultadoConsulta"></div>
+    </section>
+
+  </div>
+
+  <script>
+    // PEGA AQUÍ TU URL DE APPS SCRIPT
+    const URL_APPS_SCRIPT = "PEGAR_AQUI_TU_URL_DE_APPS_SCRIPT";
+
+    const btnRegistro = document.getElementById("btnRegistro");
+    const btnConsulta = document.getElementById("btnConsulta");
+
+    const seccionRegistro = document.getElementById("seccionRegistro");
+    const seccionConsulta = document.getElementById("seccionConsulta");
+
+    const formRegistro = document.getElementById("formRegistro");
+    const formConsulta = document.getElementById("formConsulta");
+
+    const mensajeRegistro = document.getElementById("mensajeRegistro");
+    const mensajeConsulta = document.getElementById("mensajeConsulta");
+    const resultadoConsulta = document.getElementById("resultadoConsulta");
+
+    const resumenConsulta = document.getElementById("resumenConsulta");
+    const consultaActivacion = document.getElementById("consultaActivacion");
+    const consultaVencimiento = document.getElementById("consultaVencimiento");
+    const consultaDias = document.getElementById("consultaDias");
+
+    const btnGuardar = document.getElementById("btnGuardar");
+    const btnBuscar = document.getElementById("btnBuscar");
+
+    const fechaActivacion = document.getElementById("fechaActivacion");
+    const duracion = document.getElementById("duracion");
+    const numeroTarjetaInput = document.getElementById("numeroTarjeta");
+
+    btnRegistro.addEventListener("click", () => {
+      cambiarSeccion("registro");
+    });
+
+    btnConsulta.addEventListener("click", () => {
+      cambiarSeccion("consulta");
+    });
+
+    function cambiarSeccion(seccion) {
+      if (seccion === "registro") {
+        btnRegistro.classList.add("active");
+        btnConsulta.classList.remove("active");
+
+        seccionRegistro.classList.add("active");
+        seccionConsulta.classList.remove("active");
+      } else {
+        btnConsulta.classList.add("active");
+        btnRegistro.classList.remove("active");
+
+        seccionConsulta.classList.add("active");
+        seccionRegistro.classList.remove("active");
+      }
+    }
+
+    numeroTarjetaInput.addEventListener("input", () => {
+      let valor = numeroTarjetaInput.value.replace(/\D/g, "");
+      valor = valor.substring(0, 16);
+      numeroTarjetaInput.value = valor.replace(/(.{4})/g, "$1 ").trim();
+    });
+
+    function calcularFechasRegistro() {
+      if (!fechaActivacion.value || !duracion.value) {
+        return null;
+      }
+
+      const fechaInicio = new Date(fechaActivacion.value + "T00:00:00");
+      const diasPlan = parseInt(duracion.value);
+
+      const fechaVencimiento = new Date(fechaInicio);
+      fechaVencimiento.setDate(fechaVencimiento.getDate() + diasPlan);
+
+      const hoy = new Date();
+      hoy.setHours(0, 0, 0, 0);
+
+      const diferencia = fechaVencimiento - hoy;
+      const diasRestantes = Math.ceil(diferencia / (1000 * 60 * 60 * 24));
+
+      let textoDias = "";
+
+      if (diasRestantes > 0) {
+        textoDias = diasRestantes + " días";
+      } else if (diasRestantes === 0) {
+        textoDias = "Vence hoy";
+      } else {
+        textoDias = "Vencida hace " + Math.abs(diasRestantes) + " días";
+      }
+
+      return {
+        fechaVencimiento: formatearFecha(fechaVencimiento),
+        diasRestantes: textoDias
+      };
+    }
+
+    function formatearFecha(fecha) {
+      return fecha.toLocaleDateString("es-BO", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+      });
+    }
+
+    function obtenerTarjetaSegura() {
+      const numeroLimpio = numeroTarjetaInput.value.replace(/\D/g, "");
+
+      if (numeroLimpio.length < 13 || numeroLimpio.length > 16) {
+        return null;
+      }
+
+      const ultimos4 = numeroLimpio.slice(-4);
+      const tarjetaEnmascarada = "**** **** **** " + ultimos4;
+
+      return {
+        ultimos4Tarjeta: ultimos4,
+        tarjetaEnmascarada: tarjetaEnmascarada
+      };
+    }
+
+    formRegistro.addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const correoCuenta = document.getElementById("correoCuenta").value.trim();
+      const tipoCuenta = document.getElementById("tipoCuenta").value;
+      const pais = document.getElementById("pais").value;
+      const fechaAct = fechaActivacion.value;
+      const tiempoSuscripcion = duracion.value;
+      const correoBanca = document.getElementById("correoBanca").value.trim();
+
+      const tarjetaSegura = obtenerTarjetaSegura();
+      const fechasCalculadas = calcularFechasRegistro();
+
+      if (!correoCuenta || !tipoCuenta || !pais || !fechaAct || !tiempoSuscripcion || !correoBanca) {
+        mostrarMensaje(mensajeRegistro, "Completa todos los campos.", "error");
+        return;
+      }
+
+      if (!fechasCalculadas) {
+        mostrarMensaje(mensajeRegistro, "Selecciona fecha de activación y tiempo de suscripción.", "error");
+        return;
+      }
+
+      if (!tarjetaSegura) {
+        mostrarMensaje(mensajeRegistro, "Coloca un número de tarjeta válido.", "error");
+        return;
+      }
+
+      const datos = {
+        action: "registro",
+        correoCuenta: correoCuenta,
+        tipoCuenta: tipoCuenta,
+        pais: pais,
+        fechaActivacion: fechaAct,
+        tiempoSuscripcion: tiempoSuscripcion,
+        fechaVencimiento: fechasCalculadas.fechaVencimiento,
+        diasRestantes: fechasCalculadas.diasRestantes,
+        correoBanca: correoBanca,
+        tarjetaEnmascarada: tarjetaSegura.tarjetaEnmascarada,
+        ultimos4Tarjeta: tarjetaSegura.ultimos4Tarjeta
+      };
+
+      btnGuardar.disabled = true;
+      btnGuardar.textContent = "Guardando...";
+
+      enviarJSONP(datos, function(respuesta) {
+        btnGuardar.disabled = false;
+        btnGuardar.textContent = "Guardar registro";
+
+        if (respuesta.status === "success") {
+          mostrarMensaje(mensajeRegistro, "Registro guardado correctamente.", "exito");
+          formRegistro.reset();
+        } else {
+          mostrarMensaje(mensajeRegistro, "Error al guardar: " + respuesta.message, "error");
+        }
+      });
+    });
+
+    formConsulta.addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const correoConsulta = document.getElementById("correoConsulta").value.trim();
+
+      if (!correoConsulta) {
+        mostrarMensaje(mensajeConsulta, "Coloca el correo para consultar.", "error");
+        return;
+      }
+
+      resultadoConsulta.innerHTML = "";
+      resumenConsulta.style.display = "none";
+
+      btnBuscar.disabled = true;
+      btnBuscar.textContent = "Consultando...";
+
+      enviarJSONP({
+        action: "consulta",
+        correoCuenta: correoConsulta
+      }, function(respuesta) {
+        btnBuscar.disabled = false;
+        btnBuscar.textContent = "Consultar";
+
+        if (respuesta.status !== "success") {
+          mostrarMensaje(mensajeConsulta, "Error al consultar: " + respuesta.message, "error");
+          return;
+        }
+
+        if (!respuesta.data || respuesta.data.length === 0) {
+          mostrarMensaje(mensajeConsulta, "No se encontraron registros con ese correo.", "error");
+          resumenConsulta.style.display = "none";
+          return;
+        }
+
+        mostrarMensaje(mensajeConsulta, "Consulta realizada correctamente.", "exito");
+        mostrarResumenConsulta(respuesta.data[0]);
+        mostrarResultadosConsulta(respuesta.data);
+      });
+    });
+
+    function mostrarResumenConsulta(item) {
+      consultaActivacion.textContent = item.fechaActivacion || "-";
+      consultaVencimiento.textContent = item.fechaVencimiento || "-";
+      consultaDias.textContent = item.diasRestantes || "-";
+
+      consultaDias.classList.remove("vencido");
+
+      if (item.estado === "Vencida") {
+        consultaDias.classList.add("vencido");
+      }
+
+      resumenConsulta.style.display = "block";
+    }
+
+    function mostrarResultadosConsulta(registros) {
+      resultadoConsulta.innerHTML = "";
+
+      registros.forEach((item, index) => {
+        const estadoClase = item.estado === "Vencida" ? "estado-vencido" : "estado-activo";
+
+        const card = document.createElement("div");
+        card.className = "consulta-card";
+
+        card.innerHTML = `
+          <h3>Registro ${index + 1}</h3>
+          <p><strong>Correo:</strong> ${escaparHTML(item.correoCuenta)}</p>
+          <p><strong>Tipo de cuenta:</strong> ${escaparHTML(item.tipoCuenta)}</p>
+          <p><strong>País:</strong> ${escaparHTML(item.pais)}</p>
+          <p><strong>Estado:</strong> <span class="${estadoClase}">${escaparHTML(item.estado)}</span></p>
+          <p><strong>Correo de banca:</strong> ${escaparHTML(item.correoBanca)}</p>
+          <p><strong>Tarjeta:</strong> ${escaparHTML(item.tarjetaEnmascarada)}</p>
+        `;
+
+        resultadoConsulta.appendChild(card);
+      });
+    }
+
+    function enviarJSONP(parametros, callback) {
+      const callbackName = "callback_" + Date.now() + "_" + Math.floor(Math.random() * 100000);
+
+      window[callbackName] = function(respuesta) {
+        callback(respuesta);
+
+        delete window[callbackName];
+        script.remove();
+      };
+
+      const query = new URLSearchParams({
+        ...parametros,
+        callback: callbackName
+      });
+
+      const script = document.createElement("script");
+      script.src = URL_APPS_SCRIPT + "?" + query.toString();
+
+      script.onerror = function() {
+        callback({
+          status: "error",
+          message: "No se pudo conectar con Apps Script."
+        });
+
+        delete window[callbackName];
+        script.remove();
+      };
+
+      document.body.appendChild(script);
+    }
+
+    function mostrarMensaje(elemento, texto, tipo) {
+      elemento.textContent = texto;
+      elemento.className = "mensaje " + tipo;
+      elemento.style.display = "block";
+
+      setTimeout(() => {
+        elemento.style.display = "none";
+      }, 4500);
+    }
+
+    function escaparHTML(texto) {
+      if (texto === null || texto === undefined) return "";
+
+      return String(texto)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+  </script>
+
+</body>
+</html>
