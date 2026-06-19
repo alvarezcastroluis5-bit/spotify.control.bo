@@ -25,6 +25,28 @@
       align-items: flex-start;
       padding: 25px 15px;
       color: #fff;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    .video-fondo {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      z-index: -3;
+    }
+
+    .capa-oscura {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: linear-gradient(rgba(4, 21, 47, 0.78), rgba(8, 43, 99, 0.78));
+      z-index: -2;
     }
 
     .container {
@@ -35,6 +57,8 @@
       border-radius: 20px;
       box-shadow: 0 15px 35px rgba(0,0,0,0.35);
       backdrop-filter: blur(12px);
+      position: relative;
+      z-index: 1;
     }
 
     .logo-box {
@@ -250,6 +274,12 @@
 
 <body>
 
+  <video class="video-fondo" autoplay muted loop playsinline>
+    <source src="realizame_un_video_de_fondo_do%20%281%29.mp4" type="video/mp4">
+  </video>
+
+  <div class="capa-oscura"></div>
+
   <div class="container">
 
     <div class="logo-box">
@@ -264,7 +294,6 @@
       <button class="tab-btn" id="btnConsulta" type="button">Consulta</button>
     </div>
 
-    <!-- SECCIÓN REGISTRO -->
     <section id="seccionRegistro" class="seccion active">
       <form id="formRegistro">
 
@@ -354,7 +383,6 @@
       <div id="mensajeRegistro" class="mensaje"></div>
     </section>
 
-    <!-- SECCIÓN CONSULTA -->
     <section id="seccionConsulta" class="seccion">
       <form id="formConsulta">
         <label for="correoConsulta">Correo de la cuenta</label>
@@ -383,7 +411,6 @@
   </div>
 
   <script>
-    // PEGA AQUÍ TU URL DE APPS SCRIPT
     const URL_APPS_SCRIPT = "PEGAR_AQUI_TU_URL_DE_APPS_SCRIPT";
 
     const btnRegistro = document.getElementById("btnRegistro");
