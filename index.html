@@ -37,6 +37,20 @@
       backdrop-filter: blur(12px);
     }
 
+    .logo-box {
+      text-align: center;
+      margin-bottom: 14px;
+    }
+
+    .logo-principal {
+      width: 140px;
+      max-width: 60%;
+      height: auto;
+      display: block;
+      margin: 0 auto 10px;
+      filter: drop-shadow(0 8px 18px rgba(0,0,0,0.45));
+    }
+
     h1 {
       text-align: center;
       margin: 0 0 8px;
@@ -226,6 +240,10 @@
       h1 {
         font-size: 24px;
       }
+
+      .logo-principal {
+        width: 120px;
+      }
     }
   </style>
 </head>
@@ -233,6 +251,11 @@
 <body>
 
   <div class="container">
+
+    <div class="logo-box">
+      <img src="logocuentas.png" alt="Logo" class="logo-principal">
+    </div>
+
     <h1>Control de Suscripciones</h1>
     <p class="subtitulo">Registra cuentas y consulta días restantes por correo.</p>
 
