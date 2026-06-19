@@ -36,7 +36,8 @@
       width: 100vw;
       height: 100vh;
       object-fit: cover;
-      z-index: -3;
+      z-index: 0;
+      pointer-events: none;
     }
 
     .capa-oscura {
@@ -45,8 +46,9 @@
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: linear-gradient(rgba(4, 21, 47, 0.78), rgba(8, 43, 99, 0.78));
-      z-index: -2;
+      background: linear-gradient(rgba(4, 21, 47, 0.70), rgba(8, 43, 99, 0.70));
+      z-index: 1;
+      pointer-events: none;
     }
 
     .container {
@@ -58,7 +60,7 @@
       box-shadow: 0 15px 35px rgba(0,0,0,0.35);
       backdrop-filter: blur(12px);
       position: relative;
-      z-index: 1;
+      z-index: 2;
     }
 
     .logo-box {
@@ -275,7 +277,8 @@
 
 <body>
 
-  <video class="video-fondo" autoplay muted loop playsinline poster="fondospo.jpg">
+  <video id="videoFondo" class="video-fondo" autoplay muted loop playsinline preload="auto" poster="fondospo.jpg">
+    <source src="fondovideo.mp4" type="video/mp4">
     <source src="realizame_un_video_de_fondo_do%20%281%29.mp4" type="video/mp4">
   </video>
 
@@ -415,6 +418,15 @@
 
   <script>
     const URL_APPS_SCRIPT = "PEGAR_AQUI_TU_URL_DE_APPS_SCRIPT";
+
+    const videoFondo = document.getElementById("videoFondo");
+
+    if (videoFondo) {
+      videoFondo.muted = true;
+      videoFondo.play().catch(() => {
+        console.log("El navegador bloqueó la reproducción automática del video.");
+      });
+    }
 
     const btnRegistro = document.getElementById("btnRegistro");
     const btnConsulta = document.getElementById("btnConsulta");
