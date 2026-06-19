@@ -67,12 +67,13 @@
     }
 
     .logo-principal {
-      width: 140px;
-      max-width: 60%;
+      width: 155px;
+      max-width: 65%;
       height: auto;
       display: block;
       margin: 0 auto 10px;
       filter: drop-shadow(0 8px 18px rgba(0,0,0,0.45));
+      border-radius: 12px;
     }
 
     h1 {
@@ -266,7 +267,7 @@
       }
 
       .logo-principal {
-        width: 120px;
+        width: 130px;
       }
     }
   </style>
@@ -274,7 +275,7 @@
 
 <body>
 
-  <video class="video-fondo" autoplay muted loop playsinline>
+  <video class="video-fondo" autoplay muted loop playsinline poster="fondospo.jpg">
     <source src="realizame_un_video_de_fondo_do%20%281%29.mp4" type="video/mp4">
   </video>
 
@@ -283,7 +284,7 @@
   <div class="container">
 
     <div class="logo-box">
-      <img src="logocuentas.png" alt="Logo" class="logo-principal">
+      <img src="logocuentas.png" alt="Logo Cuentas Premium BO" class="logo-principal">
     </div>
 
     <h1>Control de Suscripciones</h1>
@@ -294,6 +295,7 @@
       <button class="tab-btn" id="btnConsulta" type="button">Consulta</button>
     </div>
 
+    <!-- SECCIÓN REGISTRO -->
     <section id="seccionRegistro" class="seccion active">
       <form id="formRegistro">
 
@@ -374,7 +376,7 @@
 
         <p class="nota">
           Por seguridad, la tarjeta completa no se guarda en Google Sheets. 
-          Solo se registrarán los últimos 4 dígitos.
+          Solo se registrará enmascarada y con los últimos 4 dígitos.
         </p>
 
         <button type="submit" class="enviar" id="btnGuardar">Guardar registro</button>
@@ -383,6 +385,7 @@
       <div id="mensajeRegistro" class="mensaje"></div>
     </section>
 
+    <!-- SECCIÓN CONSULTA -->
     <section id="seccionConsulta" class="seccion">
       <form id="formConsulta">
         <label for="correoConsulta">Correo de la cuenta</label>
